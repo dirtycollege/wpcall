@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WhatsApp Chat</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="header">
+  <img id="dp" class="dp">
+  <div class="user">
+    <div class="name" id="name"></div>
+    <div class="status">Online</div>
+  </div>
+</div>
+
+<div class="chat" id="chat"></div>
+
+<div class="input-bar">
+  <input type="text" id="msg" placeholder="Message">
+  <input type="file" id="img" hidden accept="image/*">
+  <button onclick="openImage()">📷</button>
+  <button onclick="sendMsg()">➤</button>
+</div>
+
+<!-- CALL SCREEN -->
+<div class="call-screen" id="call">
+  <img id="callDp" class="call-dp">
+  <div class="call-name" id="callName"></div>
+  <div class="ring-text">Slide up to answer</div>
+
+  <div class="slide-box">
+    <img src="assets/call-accept.png" class="slide-btn" id="slideBtn">
+  </div>
+</div>
+
+<div class="video-screen" id="video">
+  <video id="callVideo" autoplay loop></video>
+  <img src="assets/call-cut.png" class="call-btn cut" onclick="endCall()">
+</div>
+
+<audio id="ringtone" src="assets/ringtone.mp3"></audio>
+
+<script src="users.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
