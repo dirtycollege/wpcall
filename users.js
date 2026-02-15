@@ -1,5 +1,5 @@
 const USERS={
-neha:{name:"Neha",dp:"assets/Neha.jpg",video:"assets/neha.mp4"},
+neha:{name:"neha",dp:"assets/neha.jpg",video:"assets/neha.mp4"},
 radha:{name:"Radha",dp:"assets/Radha.jpg",video:"assets/radha.mp4"},
 kajal:{name:"Kajal",dp:"assets/Kajal.jpg",video:"assets/kajal.mp4"},
 kamini:{name:"Kamini",dp:"assets/Kamini.jpg",video:"assets/kamini.mp4"},
