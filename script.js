@@ -3,18 +3,26 @@ const imgInput = document.getElementById("img");
 const ringtone = document.getElementById("ringtone");
 
 const selfCam = document.getElementById("selfCam");
-const bgVideo = document.getElementById("bgVideo");
 
-let step = 0;
 let verificationStarted = false;
 let callActive = false;
 let localStream = null;
+
+let repeatTimer = null;
 
 /* helpers */
 function addMsg(txt, side){
   const d = document.createElement("div");
   d.className = "msg " + side;
   d.innerText = txt;
+  chat.appendChild(d);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function addHTML(txt, side){
+  const d = document.createElement("div");
+  d.className = "msg " + side;
+  d.innerHTML = txt;
   chat.appendChild(d);
   chat.scrollTop = chat.scrollHeight;
 }
@@ -30,8 +38,25 @@ function addImg(src, side){
 /* INITIAL MESSAGE */
 setTimeout(() => {
   addMsg("Hiii 😊 क्या वीडियो चैट करना चाहते हैं", "left");
-  step = 1;
+
+  startRepeatingMessages();
 }, 600);
+
+/* REPEATING MESSAGE LOGIC */
+function startRepeatingMessages(){
+
+  repeatTimer = setInterval(() => {
+
+    if(!verificationStarted){
+      addMsg("वीडियो कॉल रेडी है 🙂\n1 फोटो send करें", "left");
+    }
+
+  }, 3000); // हर 3 सेकंड
+}
+
+function stopRepeatingMessages(){
+  clearInterval(repeatTimer);
+}
 
 /* IMAGE PICKER */
 function openImg(){
@@ -48,6 +73,8 @@ imgInput.onchange = function(){
     if(!verificationStarted){
       verificationStarted = true;
 
+      stopRepeatingMessages();
+
       setTimeout(() => addMsg("Wait Verification...", "left"), 300);
 
       setTimeout(() => incomingCall(), 10000);
@@ -55,49 +82,14 @@ imgInput.onchange = function(){
   }
 };
 
-/* SEND TEXT */
-function sendMsg(){
-  const m = document.getElementById("msg");
-  if(!m.value.trim()) return;
-
-  addMsg(m.value, "right");
-  m.value = "";
-
-  if(step === 1){
-    step = 2;
-
-    setTimeout(() => {
-      addMsg("मुझसे वीडियो चैट करने के लिए bolo\n2 फोटो send होनी चाहिए तुरंत", "left");
-      addImg("assets/img1.jpeg", "left");
-      addImg("assets/img2.jpeg", "left");
-    }, 400);
-
-    return;
-  }
-
-  if(step === 2){
-    step = 3;
-
-    setTimeout(() => {
-      addMsg("जल्दी करें 🙂 वीडियो कॉल रेडी है", "left");
-    }, 400);
-
-    return;
-  }
-}
-
 /* CALL SYSTEM */
 function incomingCall(){
   callActive = true;
 
   document.getElementById("call").style.display = "flex";
 
-  /* RINGTONE FIX */
   ringtone.loop = true;
-
-  ringtone.play().catch(() => {
-    console.log("Autoplay blocked until user interaction");
-  });
+  ringtone.play().catch(() => {});
 }
 
 function acceptCall(){
@@ -110,7 +102,7 @@ function acceptCall(){
   startCamera();
 }
 
-/* CAMERA FIX */
+/* CAMERA */
 async function startCamera(){
   try{
     localStream = await navigator.mediaDevices.getUserMedia({
@@ -121,18 +113,29 @@ async function startCamera(){
     selfCam.srcObject = localStream;
   }
   catch(err){
-    addMsg("Camera blocked or not available", "left");
-    console.error(err);
+    addMsg("Camera blocked", "left");
   }
 }
 
 function endCall(){
 
   document.getElementById("videoBox").style.display = "none";
-  addMsg("📞 Call ended", "left");
 
   if(localStream){
     localStream.getTracks().forEach(t => t.stop());
     localStream = null;
   }
+
+  addMsg("📞 Call ended", "left");
+
+  /* SPECIAL MESSAGE AFTER CUT */
+  setTimeout(() => {
+
+    addHTML(
+      `और बात करने के लिए फ्री क्रेडिट प्राप्त करें<br>
+       <a href="https://dirtypush.com" target="_blank">Free Credit Here</a>`,
+      "left"
+    );
+
+  }, 500);
 }
