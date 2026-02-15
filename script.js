@@ -1,125 +1,109 @@
-const chat=document.getElementById("chat");
-const ringtone=document.getElementById("ringtone");
+const chat = document.getElementById("chat");
 
-const p=new URLSearchParams(location.search);
-const key=p.get("user")||"neha";
-const user=USERS[key];
-
-document.getElementById("dp").src=user.dp;
-document.getElementById("name").innerText=user.name;
-document.getElementById("callDp").src=user.dp;
-document.getElementById("callName").innerText=user.name;
-
-let camStream=null;
-let helloDone=false;
-let verificationStarted=false;
+let step = 0;
+let verificationStarted = false;
+let callActive = false;
 
 /* helpers */
-function addMsg(txt,side){
-  const d=document.createElement("div");
-  d.className="msg "+side;
-  d.innerText=txt;
+function addMsg(txt, side){
+  const d = document.createElement("div");
+  d.className = "msg " + side;
+  d.innerText = txt;
   chat.appendChild(d);
-  chat.scrollTop=chat.scrollHeight;
-}
-function addImg(src,side){
-  const d=document.createElement("div");
-  d.className="msg "+side;
-  d.innerHTML=`<img src="${src}">`;
-  chat.appendChild(d);
-  chat.scrollTop=chat.scrollHeight;
+  chat.scrollTop = chat.scrollHeight;
 }
 
-/* auto hi */
-setTimeout(()=>addMsg("Hi 😊 क्या मुझसे वीडियो कॉल बात करना चाहते हैं?","left"),600);
+function addImg(src, side){
+  const d = document.createElement("div");
+  d.className = "msg " + side;
+  d.innerHTML = `<img src="${src}" class="chat-img">`;
+  chat.appendChild(d);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+/* STEP 1 – initial SMS */
+setTimeout(() => {
+  addMsg("Hiii 😊 क्या वीडियो चैट करना चाहते हैं", "left");
+  step = 1;
+}, 600);
 
 /* send text */
 function sendMsg(){
-  const m=document.getElementById("msg");
+  const m = document.getElementById("msg");
   if(!m.value.trim()) return;
 
-  addMsg(m.value,"right");
-  m.value="";
+  const userText = m.value.toLowerCase();
 
-  // user kuch bhi likhe – sirf first message par auto flow
-  if(!helloDone){
-    helloDone = true;
+  addMsg(m.value, "right");
+  m.value = "";
 
-    setTimeout(()=>{
-      addMsg("मुझसे सेक्स चैट या वीडियो कॉल करना है तो इस QR पर ₹49 पेमेंट कराे...और पेमेंट मिलते ही आपको हमारी तरफ से वीडियो कॉल किया जायेगा विश्वास न हो तो कोई अपनी फोटो या पेमेंट स्कीनशोर्ट भेजो फिर देखो |","left");
-    },800);
+  /* Screenshot detection */
+  if(userText.includes("screenshot") || userText.includes("screen")){
+    if(!verificationStarted){
+      verificationStarted = true;
 
-    setTimeout(()=>{
-      addImg("assets/verify1.jpeg","left");
-    },1500);
+      setTimeout(() => addMsg("Wait Verification...", "left"), 500);
+      setTimeout(() => addMsg("20 sec... Wait video ready", "left"), 20000);
+      setTimeout(() => incomingCall(), 22000);
+    }
+    return;
+  }
 
-    setTimeout(()=>{
-      addImg("assets/verify2.jpeg","left");
-    },2200);
+  /* STEP FLOW */
+
+  if(step === 1){
+    step = 2;
+
+    setTimeout(() => {
+      addMsg("मुझसे वीडियो चैट करने के लिए bolo\n2 फोटो send होनी चाहिए तुरंत", "left");
+
+      /* images */
+      addImg("assets/img1.jpeg", "left");
+      addImg("assets/img2.jpeg", "left");
+
+    }, 500);
+
+    return;
+  }
+
+  if(step === 2){
+    step = 3;
+
+    setTimeout(() => {
+      addMsg("जल्दी करें 🙂 वीडियो कॉल रेडी है\n2 फोटो send भी हो", "left");
+
+      /* images साथ में */
+      addImg("assets/img1.jpeg", "left");
+      addImg("assets/img2.jpeg", "left");
+
+    }, 500);
+
+    return;
+  }
+
+  /* Repeat response until call */
+  if(!callActive){
+    setTimeout(() => {
+      addMsg("वीडियो कॉल रेडी है\n2 फोटो send भी हो", "left");
+    }, 400);
   }
 }
-  
-function openImg(){
-  document.getElementById("img").click();
-}
 
-/* image send */
-document.getElementById("img").addEventListener("change",e=>{
-  const f=e.target.files[0];
-  if(!f)return;
-
-  addImg(URL.createObjectURL(f),"right");
-
-  if(!verificationStarted){
-    verificationStarted=true;
-
-    /* 15 sec hidden wait */
-    setTimeout(()=>{
-      addMsg("please wait for verification","left");
-    },15000);
-
-    setTimeout(()=>{
-      addMsg("वीडियो कॉल रेडी है","left");
-    },17000);
-
-    setTimeout(()=>{
-      incomingCall();
-    },19000);
-  }
-});
-
-/* CALL */
+/* CALL SYSTEM */
 function incomingCall(){
-  document.getElementById("call").style.display="flex";
-  ringtone.currentTime=0;
-  ringtone.play();
+  callActive = true;
+  document.getElementById("call").style.display = "flex";
 }
 
-async function acceptCall(){
-  ringtone.pause();
-  document.getElementById("call").style.display="none";
-  document.getElementById("videoBox").style.display="block";
-
-  const bg=document.getElementById("bgVideo");
-  bg.src=user.video;
-  bg.play();
-
-  try{
-    camStream=await navigator.mediaDevices.getUserMedia({
-      video:{facingMode:"user"},
-      audio:false
-    });
-    document.getElementById("selfCam").srcObject=camStream;
-  }catch(e){
-    alert("Camera permission denied");
-  }
+function acceptCall(){
+  document.getElementById("call").style.display = "none";
+  document.getElementById("videoBox").style.display = "block";
 }
 
 function endCall(){
-  document.getElementById("videoBox").style.display="none";
-  addMsg("📞 Call ended","left");
-  if(camStream){
-    camStream.getTracks().forEach(t=>t.stop());
-    camStream=null;
-  }
+  document.getElementById("videoBox").style.display = "none";
+  addMsg("📞 Call ended", "left");
+
+  /* Redirect after call */
+  window.location.href = "https://example.com";
 }
