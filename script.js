@@ -1,9 +1,14 @@
 const chat = document.getElementById("chat");
 const imgInput = document.getElementById("img");
+const ringtone = document.getElementById("ringtone");
+
+const selfCam = document.getElementById("selfCam");
+const bgVideo = document.getElementById("bgVideo");
 
 let step = 0;
 let verificationStarted = false;
 let callActive = false;
+let localStream = null;
 
 /* helpers */
 function addMsg(txt, side){
@@ -17,7 +22,7 @@ function addMsg(txt, side){
 function addImg(src, side){
   const d = document.createElement("div");
   d.className = "msg " + side;
-  d.innerHTML = `<img src="${src}" class="chat-img">`;
+  d.innerHTML = `<img src="${src}">`;
   chat.appendChild(d);
   chat.scrollTop = chat.scrollHeight;
 }
@@ -28,12 +33,12 @@ setTimeout(() => {
   step = 1;
 }, 600);
 
-/* IMAGE BUTTON */
+/* IMAGE PICKER */
 function openImg(){
   imgInput.click();
 }
 
-/* IMAGE SELECT + VERIFICATION FLOW */
+/* IMAGE SELECT → VERIFICATION → CALL */
 imgInput.onchange = function(){
   if(this.files && this.files[0]){
 
@@ -43,14 +48,9 @@ imgInput.onchange = function(){
     if(!verificationStarted){
       verificationStarted = true;
 
-      setTimeout(() => {
-        addMsg("Wait Verification...", "left");
-      }, 300);
+      setTimeout(() => addMsg("Wait Verification...", "left"), 300);
 
-      /* 10 sec बाद कॉल */
-      setTimeout(() => {
-        incomingCall();
-      }, 10000);
+      setTimeout(() => incomingCall(), 10000);
     }
   }
 };
@@ -79,7 +79,7 @@ function sendMsg(){
     step = 3;
 
     setTimeout(() => {
-      addMsg("जल्दी करें 🙂 वीडियो कॉल रेडी है\n2 फोटो send भी हो", "left");
+      addMsg("जल्दी करें 🙂 वीडियो कॉल रेडी है", "left");
     }, 400);
 
     return;
@@ -89,15 +89,50 @@ function sendMsg(){
 /* CALL SYSTEM */
 function incomingCall(){
   callActive = true;
+
   document.getElementById("call").style.display = "flex";
+
+  /* RINGTONE FIX */
+  ringtone.loop = true;
+
+  ringtone.play().catch(() => {
+    console.log("Autoplay blocked until user interaction");
+  });
 }
 
 function acceptCall(){
   document.getElementById("call").style.display = "none";
   document.getElementById("videoBox").style.display = "block";
+
+  ringtone.pause();
+  ringtone.currentTime = 0;
+
+  startCamera();
+}
+
+/* CAMERA FIX */
+async function startCamera(){
+  try{
+    localStream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: false
+    });
+
+    selfCam.srcObject = localStream;
+  }
+  catch(err){
+    addMsg("Camera blocked or not available", "left");
+    console.error(err);
+  }
 }
 
 function endCall(){
+
   document.getElementById("videoBox").style.display = "none";
   addMsg("📞 Call ended", "left");
+
+  if(localStream){
+    localStream.getTracks().forEach(t => t.stop());
+    localStream = null;
+  }
 }
