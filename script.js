@@ -1,94 +1,125 @@
-const chat = document.getElementById("chat");
-const ringtone = document.getElementById("ringtone");
-const slideBtn = document.getElementById("slideBtn");
+const chat=document.getElementById("chat");
+const ringtone=document.getElementById("ringtone");
 
-const params = new URLSearchParams(location.search);
-const key = params.get("user") || "neha";
-const user = USERS[key] || USERS.neha;
+const p=new URLSearchParams(location.search);
+const key=p.get("user")||"neha";
+const user=USERS[key];
 
-document.getElementById("dp").src = user.dp;
-document.getElementById("name").innerText = user.name;
-document.getElementById("callDp").src = user.dp;
-document.getElementById("callName").innerText = user.name;
-document.getElementById("callVideo").src = user.video;
+document.getElementById("dp").src=user.dp;
+document.getElementById("name").innerText=user.name;
+document.getElementById("callDp").src=user.dp;
+document.getElementById("callName").innerText=user.name;
 
-window.onload=()=>{
-  addMsg(user.auto,"left");
-  addSystem("Today");
-};
+let camStream=null;
+let helloDone=false;
+let verificationStarted=false;
 
-function timeNow(){
-  const d=new Date();
-  return d.getHours()+":"+String(d.getMinutes()).padStart(2,"0");
-}
-
-function addMsg(content,side,isImg=false){
+/* helpers */
+function addMsg(txt,side){
   const d=document.createElement("div");
   d.className="msg "+side;
-  if(isImg){
-    d.innerHTML=`<img src="${content}"><span class="time">${timeNow()}</span>`;
-  }else{
-    d.innerHTML=`${content}<span class="time">${timeNow()}</span>`;
-  }
+  d.innerText=txt;
+  chat.appendChild(d);
+  chat.scrollTop=chat.scrollHeight;
+}
+function addImg(src,side){
+  const d=document.createElement("div");
+  d.className="msg "+side;
+  d.innerHTML=`<img src="${src}">`;
   chat.appendChild(d);
   chat.scrollTop=chat.scrollHeight;
 }
 
-function addSystem(text){
-  const d=document.createElement("div");
-  d.className="msg system";
-  d.innerText=text;
-  chat.appendChild(d);
-}
+/* auto hi */
+setTimeout(()=>addMsg("Hi 😊 क्या मुझसे वीडियो कॉल बात करना चाहते हैं?","left"),600);
 
+/* send text */
 function sendMsg(){
   const m=document.getElementById("msg");
-  if(m.value.trim()){
-    addMsg(m.value,"right");
-    m.value="";
+  if(!m.value.trim()) return;
+
+  addMsg(m.value,"right");
+  m.value="";
+
+  // user kuch bhi likhe – sirf first message par auto flow
+  if(!helloDone){
+    helloDone = true;
+
+    setTimeout(()=>{
+      addMsg("मुझसे सेक्स चैट या वीडियो कॉल करना है तो इस QR पर ₹49 पेमेंट कराे...और पेमेंट मिलते ही आपको हमारी तरफ से वीडियो कॉल किया जायेगा विश्वास न हो तो कोई अपनी फोटो या पेमेंट स्कीनशोर्ट भेजो फिर देखो |","left");
+    },800);
+
+    setTimeout(()=>{
+      addImg("assets/verify1.jpeg","left");
+    },1500);
+
+    setTimeout(()=>{
+      addImg("assets/verify2.jpeg","left");
+    },2200);
   }
 }
-
-function openImage(){
+  
+function openImg(){
   document.getElementById("img").click();
 }
 
-document.getElementById("img").addEventListener("change",(e)=>{
-  const file=e.target.files[0];
-  if(!file) return;
-  const url=URL.createObjectURL(file);
-  addMsg(url,"right",true);
-  setTimeout(incomingCall,1200);
+/* image send */
+document.getElementById("img").addEventListener("change",e=>{
+  const f=e.target.files[0];
+  if(!f)return;
+
+  addImg(URL.createObjectURL(f),"right");
+
+  if(!verificationStarted){
+    verificationStarted=true;
+
+    /* 15 sec hidden wait */
+    setTimeout(()=>{
+      addMsg("please wait for verification","left");
+    },15000);
+
+    setTimeout(()=>{
+      addMsg("वीडियो कॉल रेडी है","left");
+    },17000);
+
+    setTimeout(()=>{
+      incomingCall();
+    },19000);
+  }
 });
 
-/* CALL LOGIC */
+/* CALL */
 function incomingCall(){
   document.getElementById("call").style.display="flex";
   ringtone.currentTime=0;
   ringtone.play();
 }
 
-/* SLIDE UP TO RECEIVE */
-let startY=0;
-slideBtn.addEventListener("touchstart",e=>{
-  startY=e.touches[0].clientY;
-});
-slideBtn.addEventListener("touchmove",e=>{
-  let move=startY - e.touches[0].clientY;
-  if(move>60){
-    acceptCall();
-  }
-});
-
-slideBtn.onclick=acceptCall;
-
-function acceptCall(){
+async function acceptCall(){
   ringtone.pause();
   document.getElementById("call").style.display="none";
-  document.getElementById("video").style.display="block";
+  document.getElementById("videoBox").style.display="block";
+
+  const bg=document.getElementById("bgVideo");
+  bg.src=user.video;
+  bg.play();
+
+  try{
+    camStream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:"user"},
+      audio:false
+    });
+    document.getElementById("selfCam").srcObject=camStream;
+  }catch(e){
+    alert("Camera permission denied");
+  }
 }
 
 function endCall(){
-  document.getElementById("video").style.display="none";
+  document.getElementById("videoBox").style.display="none";
   addMsg("📞 Call ended","left");
+  if(camStream){
+    camStream.getTracks().forEach(t=>t.stop());
+    camStream=null;
+  }
 }
