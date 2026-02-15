@@ -111,8 +111,8 @@ if(step === 1){
     addMsg("मुझसे वीडियो चैट करने के लिए\n2 फाेटाे सेड हाेनी चाहिए तुरंत", "left");
 
     /* 2 images */
-    addImg("assets/img1.jpeg", "left");
-    addImg("assets/img2.jpeg", "left");
+    addImg("assets/verify1.jpeg", "left");
+    addImg("assets/verify2.jpeg", "left");
 
   }, 600);
 
@@ -127,8 +127,8 @@ if(step === 2){
     addMsg("अभी विडियो काल करती हू", "left");
 
     /* Optional – same images फिर से (WhatsApp realistic trick) */
-    addImg("assets/img1.jpeg", "left");
-    addImg("assets/img2.jpeg", "left");
+    addImg("assets/verify1.jpeg", "left");
+    addImg("assets/verify2.jpeg", "left");
 
   }, 600);
 
