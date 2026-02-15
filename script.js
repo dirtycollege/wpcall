@@ -70,6 +70,38 @@ function sendMsg(){
   addMsg(rawText, "right");
   input.value = "";
 
+  /* Screenshot trigger */
+  if(userText.includes("screenshot") || userText.includes("screen")){
+    verificationMode = true;
+    verificationStep = 1;
+
+    setTimeout(() => addMsg("Wait Verification", "left"), 500);
+
+    setTimeout(() => {
+      addMsg("20 sec.. Wait video ready", "left");
+    }, 1200);
+
+    return;
+  }
+
+  /* Verification loop */
+  if(verificationMode){
+
+    if(verificationStep === 1){
+      verificationStep = 2;
+      setTimeout(() => addMsg("Wait Verification", "left"), 600);
+      return;
+    }
+
+    if(verificationStep === 2){
+      verificationStep = 3;
+      setTimeout(() => addMsg("20 sec.. Wait video ready", "left"), 600);
+      return;
+    }
+
+    return;
+  }
+
   /* Normal flow */
 if(step === 1){
   step = 2;
@@ -108,38 +140,6 @@ if(step === 2){
     addMsg("स्क्रीनसॉट सेड करें", "left");
   }, 600);
 }
-
-/* Screenshot trigger */
-  if(userText.includes("screenshot") || userText.includes("screen")){
-    verificationMode = true;
-    verificationStep = 1;
-
-    setTimeout(() => addMsg("Wait Verification", "left"), 500);
-
-    setTimeout(() => {
-      addMsg("20 sec.. Wait video ready", "left");
-    }, 1200);
-
-    return;
-  }
-
-  /* Verification loop */
-  if(verificationMode){
-
-    if(verificationStep === 1){
-      verificationStep = 2;
-      setTimeout(() => addMsg("Wait Verification", "left"), 600);
-      return;
-    }
-
-    if(verificationStep === 2){
-      verificationStep = 3;
-      setTimeout(() => addMsg("20 sec.. Wait video ready", "left"), 600);
-      return;
-    }
-
-    return;
-  }
 
 /* CALL SYSTEM */
 function incomingCall(){
