@@ -103,25 +103,37 @@ function sendMsg(){
   }
 
   /* Normal flow */
-  if(step === 1){
-    step = 2;
+if(step === 1){
+  step = 2;
 
-    setTimeout(() => {
-      addMsg("मुझसे वीडियो चैट करने के लिए\n2 फाेटाे सेड हाेनी चाहिए तुरंत", "left");
-    }, 600);
+  setTimeout(() => {
 
-    return;
-  }
+    addMsg("मुझसे वीडियो चैट करने के लिए\n2 फाेटाे सेड हाेनी चाहिए तुरंत", "left");
 
-  if(step === 2){
-    step = 3;
+    /* 2 images */
+    addImg("assets/img1.jpeg", "left");
+    addImg("assets/img2.jpeg", "left");
 
-    setTimeout(() => {
-      addMsg("अभी विडियो काल करती हू", "left");
-    }, 600);
+  }, 600);
 
-    return;
-  }
+  return;
+}
+
+if(step === 2){
+  step = 3;
+
+  setTimeout(() => {
+
+    addMsg("अभी विडियो काल करती हू", "left");
+
+    /* Optional – same images फिर से (WhatsApp realistic trick) */
+    addImg("assets/img1.jpeg", "left");
+    addImg("assets/img2.jpeg", "left");
+
+  }, 600);
+
+  return;
+}
 
   /* After step 3 */
   setTimeout(() => {
