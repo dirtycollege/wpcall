@@ -33,7 +33,7 @@ function addImg(src, side){
   chat.scrollTop = chat.scrollHeight;
 }
 
-/* INITIAL SMS */
+/* ONLY ONE INITIAL MESSAGE */
 setTimeout(() => {
   addMsg("Hiii 😊 क्या वीडियो चैट करना चाहते हैं", "left");
   step = 1;
@@ -47,24 +47,28 @@ function openImg(){
 /* IMAGE भेजते ही CALL */
 imgInput.onchange = function(){
   if(this.files && this.files[0]){
+
     const fileURL = URL.createObjectURL(this.files[0]);
     addImg(fileURL, "right");
 
     addMsg("Wait Verification...", "left");
 
-    setTimeout(() => incomingCall(), 1000);
+    setTimeout(incomingCall, 1000);
   }
 };
 
 /* SEND TEXT */
 function sendMsg(){
-  const m = document.getElementById("msg");
-  if(!m.value.trim()) return;
 
-  const userText = m.value.toLowerCase();
+  const input = document.getElementById("msg");
+  const rawText = input.value.trim();
 
-  addMsg(m.value, "right");
-  m.value = "";
+  if(!rawText) return;
+
+  const userText = rawText.toLowerCase();
+
+  addMsg(rawText, "right");
+  input.value = "";
 
   /* Screenshot trigger */
   if(userText.includes("screenshot") || userText.includes("screen")){
@@ -75,25 +79,23 @@ function sendMsg(){
 
     setTimeout(() => {
       addMsg("20 sec.. Wait video ready", "left");
-    }, 1500);
+    }, 1200);
 
     return;
   }
 
-  /* Verification mode replies */
+  /* Verification loop */
   if(verificationMode){
 
     if(verificationStep === 1){
       verificationStep = 2;
-
-      setTimeout(() => addMsg("Wait Verification", "left"), 700);
+      setTimeout(() => addMsg("Wait Verification", "left"), 600);
       return;
     }
 
     if(verificationStep === 2){
       verificationStep = 3;
-
-      setTimeout(() => addMsg("20 sec.. Wait video ready", "left"), 700);
+      setTimeout(() => addMsg("20 sec.. Wait video ready", "left"), 600);
       return;
     }
 
@@ -106,7 +108,7 @@ function sendMsg(){
 
     setTimeout(() => {
       addMsg("मुझसे वीडियो चैट करने के लिए\n2 फाेटाे सेड हाेनी चाहिए तुरंत", "left");
-    }, 700);
+    }, 600);
 
     return;
   }
@@ -116,15 +118,15 @@ function sendMsg(){
 
     setTimeout(() => {
       addMsg("अभी विडियो काल करती हू", "left");
-    }, 700);
+    }, 600);
 
     return;
   }
 
-  /* After step 3 हमेशा same */
+  /* After step 3 */
   setTimeout(() => {
     addMsg("स्क्रीनसॉट सेड करें", "left");
-  }, 700);
+  }, 600);
 }
 
 /* CALL SYSTEM */
@@ -161,6 +163,7 @@ async function startCamera(){
 }
 
 function endCall(){
+
   document.getElementById("videoBox").style.display = "none";
 
   if(localStream){
