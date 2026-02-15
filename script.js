@@ -28,16 +28,30 @@ setTimeout(() => {
   step = 1;
 }, 600);
 
-/* IMAGE BUTTON FIX */
+/* IMAGE BUTTON */
 function openImg(){
   imgInput.click();
 }
 
-/* IMAGE SELECT FIX */
+/* IMAGE SELECT + VERIFICATION FLOW */
 imgInput.onchange = function(){
   if(this.files && this.files[0]){
+
     const fileURL = URL.createObjectURL(this.files[0]);
     addImg(fileURL, "right");
+
+    if(!verificationStarted){
+      verificationStarted = true;
+
+      setTimeout(() => {
+        addMsg("Wait Verification...", "left");
+      }, 300);
+
+      /* 10 sec बाद कॉल */
+      setTimeout(() => {
+        incomingCall();
+      }, 10000);
+    }
   }
 };
 
@@ -45,8 +59,6 @@ imgInput.onchange = function(){
 function sendMsg(){
   const m = document.getElementById("msg");
   if(!m.value.trim()) return;
-
-  const userText = m.value.toLowerCase();
 
   addMsg(m.value, "right");
   m.value = "";
