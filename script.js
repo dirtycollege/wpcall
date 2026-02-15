@@ -1,14 +1,12 @@
 const chat = document.getElementById("chat");
 const imgInput = document.getElementById("img");
 const ringtone = document.getElementById("ringtone");
-
 const selfCam = document.getElementById("selfCam");
 
-let verificationStarted = false;
-let callActive = false;
+let step = 0;
+let verificationMode = false;
+let verificationStep = 0;
 let localStream = null;
-
-let repeatTimer = null;
 
 /* helpers */
 function addMsg(txt, side){
@@ -35,57 +33,102 @@ function addImg(src, side){
   chat.scrollTop = chat.scrollHeight;
 }
 
-/* INITIAL MESSAGE */
+/* INITIAL SMS */
 setTimeout(() => {
   addMsg("Hiii 😊 क्या वीडियो चैट करना चाहते हैं", "left");
-
-  startRepeatingMessages();
+  step = 1;
 }, 600);
 
-/* REPEATING MESSAGE LOGIC */
-function startRepeatingMessages(){
-
-  repeatTimer = setInterval(() => {
-
-    if(!verificationStarted){
-      addMsg("वीडियो कॉल रेडी है 🙂\n1 फोटो send करें", "left");
-    }
-
-  }, 3000); // हर 3 सेकंड
-}
-
-function stopRepeatingMessages(){
-  clearInterval(repeatTimer);
-}
-
-/* IMAGE PICKER */
+/* IMAGE BUTTON */
 function openImg(){
   imgInput.click();
 }
 
-/* IMAGE SELECT → VERIFICATION → CALL */
+/* IMAGE भेजते ही CALL */
 imgInput.onchange = function(){
   if(this.files && this.files[0]){
-
     const fileURL = URL.createObjectURL(this.files[0]);
     addImg(fileURL, "right");
 
-    if(!verificationStarted){
-      verificationStarted = true;
+    addMsg("Wait Verification...", "left");
 
-      stopRepeatingMessages();
-
-      setTimeout(() => addMsg("Wait Verification...", "left"), 300);
-
-      setTimeout(() => incomingCall(), 10000);
-    }
+    setTimeout(() => incomingCall(), 1000);
   }
 };
 
+/* SEND TEXT */
+function sendMsg(){
+  const m = document.getElementById("msg");
+  if(!m.value.trim()) return;
+
+  const userText = m.value.toLowerCase();
+
+  addMsg(m.value, "right");
+  m.value = "";
+
+  /* Screenshot trigger */
+  if(userText.includes("screenshot") || userText.includes("screen")){
+    verificationMode = true;
+    verificationStep = 1;
+
+    setTimeout(() => addMsg("Wait Verification", "left"), 500);
+
+    setTimeout(() => {
+      addMsg("20 sec.. Wait video ready", "left");
+    }, 1500);
+
+    return;
+  }
+
+  /* Verification mode replies */
+  if(verificationMode){
+
+    if(verificationStep === 1){
+      verificationStep = 2;
+
+      setTimeout(() => addMsg("Wait Verification", "left"), 700);
+      return;
+    }
+
+    if(verificationStep === 2){
+      verificationStep = 3;
+
+      setTimeout(() => addMsg("20 sec.. Wait video ready", "left"), 700);
+      return;
+    }
+
+    return;
+  }
+
+  /* Normal flow */
+  if(step === 1){
+    step = 2;
+
+    setTimeout(() => {
+      addMsg("मुझसे वीडियो चैट करने के लिए\n2 फाेटाे सेड हाेनी चाहिए तुरंत", "left");
+    }, 700);
+
+    return;
+  }
+
+  if(step === 2){
+    step = 3;
+
+    setTimeout(() => {
+      addMsg("अभी विडियो काल करती हू", "left");
+    }, 700);
+
+    return;
+  }
+
+  /* After step 3 हमेशा same */
+  setTimeout(() => {
+    addMsg("स्क्रीनसॉट सेड करें", "left");
+  }, 700);
+}
+
 /* CALL SYSTEM */
 function incomingCall(){
-  callActive = true;
-
   document.getElementById("call").style.display = "flex";
 
   ringtone.loop = true;
@@ -106,8 +149,8 @@ function acceptCall(){
 async function startCamera(){
   try{
     localStream = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: false
+      video:true,
+      audio:false
     });
 
     selfCam.srcObject = localStream;
@@ -118,7 +161,6 @@ async function startCamera(){
 }
 
 function endCall(){
-
   document.getElementById("videoBox").style.display = "none";
 
   if(localStream){
@@ -128,14 +170,11 @@ function endCall(){
 
   addMsg("📞 Call ended", "left");
 
-  /* SPECIAL MESSAGE AFTER CUT */
   setTimeout(() => {
-
     addHTML(
       `और बात करने के लिए फ्री क्रेडिट प्राप्त करें<br>
        <a href="https://dirtypush.com" target="_blank">Free Credit Here</a>`,
       "left"
     );
-
   }, 500);
 }
