@@ -1,4 +1,5 @@
 const chat = document.getElementById("chat");
+const imgInput = document.getElementById("img");
 
 let step = 0;
 let verificationStarted = false;
@@ -21,13 +22,26 @@ function addImg(src, side){
   chat.scrollTop = chat.scrollHeight;
 }
 
-/* STEP 1 – initial SMS */
+/* INITIAL MESSAGE */
 setTimeout(() => {
   addMsg("Hiii 😊 क्या वीडियो चैट करना चाहते हैं", "left");
   step = 1;
 }, 600);
 
-/* send text */
+/* IMAGE BUTTON FIX */
+function openImg(){
+  imgInput.click();
+}
+
+/* IMAGE SELECT FIX */
+imgInput.onchange = function(){
+  if(this.files && this.files[0]){
+    const fileURL = URL.createObjectURL(this.files[0]);
+    addImg(fileURL, "right");
+  }
+};
+
+/* SEND TEXT */
 function sendMsg(){
   const m = document.getElementById("msg");
   if(!m.value.trim()) return;
@@ -37,31 +51,14 @@ function sendMsg(){
   addMsg(m.value, "right");
   m.value = "";
 
-  /* Screenshot detection */
-  if(userText.includes("screenshot") || userText.includes("screen")){
-    if(!verificationStarted){
-      verificationStarted = true;
-
-      setTimeout(() => addMsg("Wait Verification...", "left"), 500);
-      setTimeout(() => addMsg("20 sec... Wait video ready", "left"), 20000);
-      setTimeout(() => incomingCall(), 22000);
-    }
-    return;
-  }
-
-  /* STEP FLOW */
-
   if(step === 1){
     step = 2;
 
     setTimeout(() => {
       addMsg("मुझसे वीडियो चैट करने के लिए bolo\n2 फोटो send होनी चाहिए तुरंत", "left");
-
-      /* images */
       addImg("assets/img1.jpeg", "left");
       addImg("assets/img2.jpeg", "left");
-
-    }, 500);
+    }, 400);
 
     return;
   }
@@ -71,21 +68,9 @@ function sendMsg(){
 
     setTimeout(() => {
       addMsg("जल्दी करें 🙂 वीडियो कॉल रेडी है\n2 फोटो send भी हो", "left");
-
-      /* images साथ में */
-      addImg("assets/img1.jpeg", "left");
-      addImg("assets/img2.jpeg", "left");
-
-    }, 500);
+    }, 400);
 
     return;
-  }
-
-  /* Repeat response until call */
-  if(!callActive){
-    setTimeout(() => {
-      addMsg("वीडियो कॉल रेडी है\n2 फोटो send भी हो", "left");
-    }, 400);
   }
 }
 
@@ -103,7 +88,4 @@ function acceptCall(){
 function endCall(){
   document.getElementById("videoBox").style.display = "none";
   addMsg("📞 Call ended", "left");
-
-  /* Redirect after call */
-  window.location.href = "https://example.com";
 }
