@@ -1,51 +1,141 @@
-<!DOCTYPE html>
-<html lang="hi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>WhatsApp UI</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
+const chat = document.getElementById("chat");
+const imgInput = document.getElementById("img");
+const ringtone = document.getElementById("ringtone");
 
-<div class="app">
+const selfCam = document.getElementById("selfCam");
 
-  <div class="header">
-    <img id="dp" class="dp">
-    <div>
-      <div id="name" class="name"></div>
-      <div class="status">online</div>
-    </div>
-  </div>
+let verificationStarted = false;
+let callActive = false;
+let localStream = null;
 
-  <div id="chat" class="chat"></div>
+let repeatTimer = null;
 
-  <div class="input">
-    <input id="msg" placeholder="Message">
-    <input type="file" id="img" hidden accept="image/*">
-    <button onclick="openImg()">📷</button>
-    <button onclick="sendMsg()">➤</button>
-  </div>
+/* helpers */
+function addMsg(txt, side){
+  const d = document.createElement("div");
+  d.className = "msg " + side;
+  d.innerText = txt;
+  chat.appendChild(d);
+  chat.scrollTop = chat.scrollHeight;
+}
 
-</div>
+function addHTML(txt, side){
+  const d = document.createElement("div");
+  d.className = "msg " + side;
+  d.innerHTML = txt;
+  chat.appendChild(d);
+  chat.scrollTop = chat.scrollHeight;
+}
 
-<!-- CALL -->
-<div id="call" class="call">
-  <img id="callDp" class="call-dp">
-  <div id="callName"></div>
-  <img src="assets/call-accept.png" class="accept" onclick="acceptCall()">
-</div>
+function addImg(src, side){
+  const d = document.createElement("div");
+  d.className = "msg " + side;
+  d.innerHTML = `<img src="${src}">`;
+  chat.appendChild(d);
+  chat.scrollTop = chat.scrollHeight;
+}
 
-<!-- VIDEO -->
-<div id="videoBox" class="video-box">
-  <video id="bgVideo" autoplay loop muted></video>
-  <video id="selfCam" autoplay muted playsinline></video>
-  <img src="assets/call-cut.png" class="cut" onclick="endCall()">
-</div>
+/* INITIAL MESSAGE */
+setTimeout(() => {
+  addMsg("Hiii 😊 क्या वीडियो चैट करना चाहते हैं", "left");
 
-<audio id="ringtone" src="assets/ringtone.mp3"></audio>
+  startRepeatingMessages();
+}, 600);
 
-<script src="users.js"></script>
-<script src="script.js"></script>
-</body>
-</html>
+/* REPEATING MESSAGE LOGIC */
+function startRepeatingMessages(){
+
+  repeatTimer = setInterval(() => {
+
+    if(!verificationStarted){
+      addMsg("वीडियो कॉल रेडी है 🙂\n1 फोटो send करें", "left");
+    }
+
+  }, 3000); // हर 3 सेकंड
+}
+
+function stopRepeatingMessages(){
+  clearInterval(repeatTimer);
+}
+
+/* IMAGE PICKER */
+function openImg(){
+  imgInput.click();
+}
+
+/* IMAGE SELECT → VERIFICATION → CALL */
+imgInput.onchange = function(){
+  if(this.files && this.files[0]){
+
+    const fileURL = URL.createObjectURL(this.files[0]);
+    addImg(fileURL, "right");
+
+    if(!verificationStarted){
+      verificationStarted = true;
+
+      stopRepeatingMessages();
+
+      setTimeout(() => addMsg("Wait Verification...", "left"), 300);
+
+      setTimeout(() => incomingCall(), 10000);
+    }
+  }
+};
+
+/* CALL SYSTEM */
+function incomingCall(){
+  callActive = true;
+
+  document.getElementById("call").style.display = "flex";
+
+  ringtone.loop = true;
+  ringtone.play().catch(() => {});
+}
+
+function acceptCall(){
+  document.getElementById("call").style.display = "none";
+  document.getElementById("videoBox").style.display = "block";
+
+  ringtone.pause();
+  ringtone.currentTime = 0;
+
+  startCamera();
+}
+
+/* CAMERA */
+async function startCamera(){
+  try{
+    localStream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: false
+    });
+
+    selfCam.srcObject = localStream;
+  }
+  catch(err){
+    addMsg("Camera blocked", "left");
+  }
+}
+
+function endCall(){
+
+  document.getElementById("videoBox").style.display = "none";
+
+  if(localStream){
+    localStream.getTracks().forEach(t => t.stop());
+    localStream = null;
+  }
+
+  addMsg("📞 Call ended", "left");
+
+  /* SPECIAL MESSAGE AFTER CUT */
+  setTimeout(() => {
+
+    addHTML(
+      `और बात करने के लिए फ्री क्रेडिट प्राप्त करें<br>
+       <a href="https://dirtypush.com" target="_blank">Free Credit Here</a>`,
+      "left"
+    );
+
+  }, 500);
+}
