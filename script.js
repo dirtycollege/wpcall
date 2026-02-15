@@ -38,6 +38,32 @@ setTimeout(() => {
   addMsg("Hiii 😊 क्या वीडियो चैट करना चाहते हैं", "left");
   step = 1;
 }, 600);
+/* STEP FLOW */
+
+  if(step === 1){
+    step = 2;
+
+    setTimeout(() => {
+      addMsg("मुझसे वीडियो चैट करने के लिए bolo\n2 फोटो send होनी चाहिए तुरंत", "left");
+
+      /* images */
+      addImg("assets/img1.jpeg", "left");
+      addImg("assets/img2.jpeg", "left");
+
+    }, 500);
+
+    return;
+  }
+
+  if(step === 2){
+    step = 3;
+
+    setTimeout(() => {
+      addMsg("जल्दी करें 🙂 वीडियो कॉल रेडी है\n2 फोटो send भी हो", "left");
+
+      /* images साथ में */
+      addImg("assets/img1.jpeg", "left");
+      addImg("assets/img2.jpeg", "left");
 
 /* IMAGE BUTTON */
 function openImg(){
