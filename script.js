@@ -149,7 +149,7 @@ function sendMsg(){
       addMsg("₹99 रुपये का पेमेंट जल्दी करे और स्क्रीनशॉट भेजे वीडियो कॉल रेडी है| मै अभी वीडियो कॉल करती हू जल्दी करे", "left");
 
       addImg("assets/verify2.jpg", "left");
-      addImg("assets/verify2.jpeg", "left");
+      addImg("assets/verifypay.jpeg", "left");
 
     }, 600);
 
