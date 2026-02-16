@@ -54,7 +54,7 @@ function addImg(src, side){
 /* ---------------- INITIAL MESSAGE ---------------- */
 
 setTimeout(() => {
-  addMsg("Hiii 😊 क्या वीडियो चैट करना चाहते हैं", "left");
+  addMsg("Hiii 😎 क्या आप मुझसे वीडियो कॉल पर बात करना चाहते हैं?", "left");
   step = 1;
 }, 600);
 
@@ -131,10 +131,10 @@ function sendMsg(){
 
     setTimeout(() => {
 
-      addMsg("मुझसे वीडियो चैट करने के लिए\n2 फाेटाे सेड हाेनी चाहिए तुरंत", "left");
+      addMsg("अगर आप सेक्स वीडियो चैट करना चाहते हैं तो आपको ₹99 रुपये QR काेड पर पेमेंट करना हाेगा और स्क्रीनशॉट भेजे स्क्रीनशॉट भेजते ही जॉच करके वीडियो कॉल किया जाएगा 100% 👍👍👍", "left");
 
-      addImg("assets/verify1.jpeg", "left");
-      addImg("assets/verify2.jpeg", "left");
+      addImg("assets/verify1.jpg", "left");
+      addImg("assets/verifypay.jpeg", "left");
 
     }, 600);
 
@@ -146,9 +146,9 @@ function sendMsg(){
 
     setTimeout(() => {
 
-      addMsg("अभी विडियो काल करती हू", "left");
+      addMsg("₹99 रुपये का पेमेंट जल्दी करे और स्क्रीनशॉट भेजे वीडियो कॉल रेडी है| मै अभी वीडियो कॉल करती हू जल्दी करे", "left");
 
-      addImg("assets/verify1.jpeg", "left");
+      addImg("assets/verify2.jpg", "left");
       addImg("assets/verify2.jpeg", "left");
 
     }, 600);
@@ -158,7 +158,7 @@ function sendMsg(){
 
   if(step === 3){
     setTimeout(() => {
-      addMsg("स्क्रीनसॉट सेड करें", "left");
+      addMsg("स्क्रीनशॉट सेड करें", "left");
     }, 600);
   }
 }
