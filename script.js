@@ -212,7 +212,7 @@ function endCall(){
   setTimeout(() => {
     addHTML(
       `और बात करने के लिए फ्री क्रेडिट प्राप्त करें<br>
-       <a href="https://dirtypush.com" target="_blank">Free Credit Here</a>`,
+       <a href="https://swogex.com" target="_blank">Free Credit Here</a>`,
       "left"
     );
   }, 500);
