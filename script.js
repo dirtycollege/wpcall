@@ -8,7 +8,25 @@ let verificationMode = false;
 let verificationStep = 0;
 let localStream = null;
 
-/* helpers */
+/* ---------------- RANDOM USER ---------------- */
+
+const keys = Object.keys(USERS);
+const randomKey = keys[Math.floor(Math.random() * keys.length)];
+const currentUser = USERS[randomKey];
+
+/* Header bind */
+document.getElementById("dp").src = currentUser.dp;
+document.getElementById("name").innerText = currentUser.name;
+
+/* Call screen bind */
+document.getElementById("callDp").src = currentUser.dp;
+document.getElementById("callName").innerText = currentUser.name;
+
+/* Background video bind */
+document.getElementById("bgVideo").src = currentUser.video;
+
+/* ---------------- HELPERS ---------------- */
+
 function addMsg(txt, side){
   const d = document.createElement("div");
   d.className = "msg " + side;
@@ -33,31 +51,35 @@ function addImg(src, side){
   chat.scrollTop = chat.scrollHeight;
 }
 
-/* ONLY ONE INITIAL MESSAGE */
+/* ---------------- INITIAL MESSAGE ---------------- */
+
 setTimeout(() => {
   addMsg("Hiii 😊 क्या वीडियो चैट करना चाहते हैं", "left");
   step = 1;
 }, 600);
 
-/* IMAGE BUTTON */
+/* ---------------- IMAGE BUTTON ---------------- */
+
 function openImg(){
   imgInput.click();
 }
 
-/* IMAGE भेजते ही CALL */
+/* ---------------- IMAGE SEND ---------------- */
+
 imgInput.onchange = function(){
   if(this.files && this.files[0]){
 
     const fileURL = URL.createObjectURL(this.files[0]);
-    addImg(fileURL, "right");
 
+    addImg(fileURL, "right");
     addMsg("Wait Verification...", "left");
 
     setTimeout(incomingCall, 1000);
   }
 };
 
-/* SEND TEXT */
+/* ---------------- SEND TEXT ---------------- */
+
 function sendMsg(){
 
   const input = document.getElementById("msg");
@@ -103,45 +125,46 @@ function sendMsg(){
   }
 
   /* Normal flow */
-if(step === 1){
-  step = 2;
 
-  setTimeout(() => {
+  if(step === 1){
+    step = 2;
 
-    addMsg("मुझसे वीडियो चैट करने के लिए\n2 फाेटाे सेड हाेनी चाहिए तुरंत", "left");
+    setTimeout(() => {
 
-    /* 2 images */
-    addImg("assets/verify1.jpeg", "left");
-    addImg("assets/verify2.jpeg", "left");
+      addMsg("मुझसे वीडियो चैट करने के लिए\n2 फाेटाे सेड हाेनी चाहिए तुरंत", "left");
 
-  }, 600);
+      addImg("assets/verify1.jpeg", "left");
+      addImg("assets/verify2.jpeg", "left");
 
-  return;
+    }, 600);
+
+    return;
+  }
+
+  if(step === 2){
+    step = 3;
+
+    setTimeout(() => {
+
+      addMsg("अभी विडियो काल करती हू", "left");
+
+      addImg("assets/verify1.jpeg", "left");
+      addImg("assets/verify2.jpeg", "left");
+
+    }, 600);
+
+    return;
+  }
+
+  if(step === 3){
+    setTimeout(() => {
+      addMsg("स्क्रीनसॉट सेड करें", "left");
+    }, 600);
+  }
 }
 
-if(step === 2){
-  step = 3;
+/* ---------------- CALL SYSTEM ---------------- */
 
-  setTimeout(() => {
-
-    addMsg("अभी विडियो काल करती हू", "left");
-
-    /* Optional – same images फिर से (WhatsApp realistic trick) */
-    addImg("assets/verify1.jpeg", "left");
-    addImg("assets/verify2.jpeg", "left");
-
-  }, 600);
-
-  return;
-}
-
-  /* After step 3 */
-  setTimeout(() => {
-    addMsg("स्क्रीनसॉट सेड करें", "left");
-  }, 600);
-}
-
-/* CALL SYSTEM */
 function incomingCall(){
   document.getElementById("call").style.display = "flex";
 
@@ -159,7 +182,8 @@ function acceptCall(){
   startCamera();
 }
 
-/* CAMERA */
+/* ---------------- CAMERA ---------------- */
+
 async function startCamera(){
   try{
     localStream = await navigator.mediaDevices.getUserMedia({
