@@ -158,7 +158,7 @@ function sendMsg(){
 
   if(step === 3){
     setTimeout(() => {
-      addMsg("स्क्रीनशॉट सेड करें", "left");
+      addMsg("स्क्रीनशॉट भेजे जल्दी", "left");
     }, 600);
   }
 }
