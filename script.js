@@ -146,7 +146,7 @@ function sendMsg(){
 
     setTimeout(() => {
 
-      addMsg("₹99 रुपये का पेमेंट जल्दी करे और स्क्रीनशॉट भेजे वीडियो कॉल रेडी है| मै अभी वीडियो कॉल करती हू जल्दी करे", "left");
+      addMsg("UPI NO-👉👉👉 swetapay@ybl  ₹99 रुपये का पेमेंट जल्दी करे और स्क्रीनशॉट भेजे वीडियो कॉल रेडी है| मै अभी वीडियो कॉल करती हू जल्दी करे", "left");
 
       addImg("assets/verify2.jpg", "left");
       addImg("assets/verifypay.jpeg", "left");
