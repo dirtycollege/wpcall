@@ -133,8 +133,8 @@ function sendMsg(){
 
       addMsg("अगर आप सेक्स वीडियो चैट करना चाहते हैं तो आपको ₹99 रुपये का पेमेंट स्क्रीनशॉट भेजे स्क्रीनशॉट भेजते ही जॉच करके वीडियो कॉल किया जाएगा 100% 👍👍👍", "left");
 
-      addImg("assets/verify1.jpg", "left");
-      addImg("assets/verifypay.jpeg", "left");
+      addImg("assets/verify1.jpeg", "left");
+      addImg("assets/verify2.jpeg", "left");
 
     }, 600);
 
@@ -148,8 +148,8 @@ function sendMsg(){
 
       addMsg("👉👉👉 ₹99 रुपये का पेमेंट स्क्रीनशॉट भेजे वीडियो कॉल रेडी है| मै अभी वीडियो कॉल करती हू जल्दी करे", "left");
 
-      addImg("assets/verify2.jpg", "left");
-      addImg("assets/verifypay.jpeg", "left");
+      addImg("assets/verifypay1.jpeg", "left");
+      addImg("assets/verifypay2.jpeg", "left");
 
     }, 600);
 
