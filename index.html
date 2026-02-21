@@ -7,34 +7,6 @@
 <link rel="stylesheet" href="style.css">
 </head>
 
-<script>
-const SITE_A_DOMAIN = "wpcall.dirtypush.com/";  // Yahan apna Site A domain daalo
-const TIMER_SECONDS = 20;
-const REDIRECT_LINK = "wpcall.dirtypush.com/"; // Redirect URL
-
-function startTimer() {
-    let time = TIMER_SECONDS;
-    const el = document.getElementById("main-timer");
-
-    el.style.display = "block"; // Timer visible
-
-    const interval = setInterval(() => {
-        el.innerHTML = `Redirecting in ${time} seconds...`;
-        time--;
-
-        if (time < 0) {
-            clearInterval(interval);
-            window.location.href = REDIRECT_LINK;
-        }
-    }, 1000);
-}
-
-// -------- Referrer Check --------
-if (document.referrer.includes(SITE_A_DOMAIN)) {
-    startTimer();   // Sirf Site A se aaye to timer chalega
-}
-</script>
-
 <body>
 
 <div class="app">
@@ -76,5 +48,33 @@ if (document.referrer.includes(SITE_A_DOMAIN)) {
 
 <script src="users.js"></script>
 <script src="script.js"></script>
+
+<script>
+const SITE_A_DOMAIN = "wpcall.dirtypush.com";
+const TIMER_SECONDS = 20;
+const REDIRECT_LINK = "https://wpcall.dirtypush.com/";
+
+function startTimer() {
+    let time = TIMER_SECONDS;
+    const el = document.getElementById("main-timer");
+
+    el.style.display = "block";
+
+    const interval = setInterval(() => {
+        el.innerHTML = `Free credit ke liye wait karen (${time})`;
+        time--;
+
+        if (time < 0) {
+            clearInterval(interval);
+            window.location.href = REDIRECT_LINK;
+        }
+    }, 1000);
+}
+
+if (document.referrer.includes(SITE_A_DOMAIN)) {
+    startTimer();
+}
+</script>
+
 </body>
 </html>
