@@ -137,7 +137,7 @@ function sendMsg(){
     step = 3;
 
     setTimeout(() => {
-      addMsg("👉👉👉 ₹49 रुपये का पेमेंट स्क्रीनशॉट भेजे वीडियो कॉल रेडी है| मै अभी वीडियो कॉल करती हू जल्दी करे", "left");
+      addMsg("👉👉👉 ₹49 रुपये का पेमेंट स्क्रीनशॉट भेजे वीडियो कॉल रेडी है मै अभी वीडियो कॉल करती हू जल्दी करे|", "left");
       addImg("assets/verifypay1.jpeg", "left");
       addImg("assets/verifypay2.jpeg", "left");
     }, 600);
@@ -146,7 +146,7 @@ function sendMsg(){
   }
 
   if(step === 3){
-    setTimeout(() => addMsg("स्क्रीनशॉट भेजे जल्दी वीडियो कॉल रेडी है", "left"), 600);
+    setTimeout(() => addMsg("स्क्रीनशॉट भेजे जल्दी वीडियो कॉल रेडी है|", "left"), 600);
   }
 }
 
